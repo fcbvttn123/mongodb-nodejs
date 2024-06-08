@@ -1,7 +1,7 @@
 const express = require('express');
-const morgan = require('morgan');
 const mongoose = require("mongoose")
 const Blog = require('./models/blog');
+const blogRoutes = require("./routes/blogsRoutes")
 
 // express app
 const app = express();
@@ -55,56 +55,17 @@ app.get('/test-read-one-blog', (req, res) => {
 })
 
 // Home Page
-app.get('/', (req, res) => {
-  Blog.find().sort({createdAt: -1})
-    .then(result => {
-      res.render('index', { title: 'Home', blogs: result })
-    })
-    .catch(err => res.send(err))
+app.get("/", (req, res) => {
+  res.redirect("/blogs")
 })
+
+// Blog Routes 
+// app.use(blogRoutes)
+app.use("/blogs", blogRoutes)
 
 // About Page
 app.get('/about', (req, res) => {
   res.render('about', { title: 'About' })
-})
-
-// Create Page
-app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create a new blog' })
-})
-
-// Create Blog (POST) --> Need a middleware to do .body
-app.post("/blogs", (req, res) => {
-  // req.body is an object with property names from the html form 
-  const blog = new Blog(req.body)
-  blog.save()
-    .then(result => {
-      res.redirect("/blogs/create")
-    })
-    .catch(err => {
-      console.log(err)
-    })
-})
-
-// Get One Blog (GET) 
-app.get("/blogs/:id", (req, res) => {
-  const id = req.params.id
-  Blog.findById(id)
-    .then(result => {
-      console.log(result)
-      res.render("blog-detail", {title: "Blog Details", blog: result})
-    })
-    .catch(err => res.send(err))
-})
-
-// Delete Blog (DELETE)
-app.delete("/blogs/:id", (req, res) => {
-  const id = req.params.id
-  Blog.findByIdAndDelete(id)
-    .then(result => {
-      res.json({redirect: "/"})
-    })
-    .catch(err => console.log(err))
 })
 
 // 404 Page
