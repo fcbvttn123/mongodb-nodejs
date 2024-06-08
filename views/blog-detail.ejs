@@ -1,0 +1,43 @@
+<html>
+
+    <%- include("./partials/head.ejs") %>
+
+    <body>
+        <!-- Navigation -->
+        <%- include("./partials/nav.ejs") %>
+        <!-- Body -->
+        <div>
+            <div>
+                <h2>Title</h2>
+                <p><%= blog.title %></p>
+            </div>
+            <div>
+                <h2>Snippet</h2>
+                <p><%= blog.snippet %></p>
+            </div>
+            <div>
+                <h2>Body</h2>
+                <p><%= blog.body %></p>
+            </div>
+            <div>
+                <h2>Delete Button</h2>
+                <button id="deleteBtn" data-blog-id="<%= blog.id %>">Delete</button>
+            </div>
+        </div>
+        <!-- Footer -->
+        <%- include("./partials/footer.ejs") %>
+        <!-- Script -->
+        <script>
+            let deleteBtn = document.querySelector("#deleteBtn")
+            deleteBtn.addEventListener("click", e => {
+                const endPoint = `/blogs/${deleteBtn.dataset.blogId}`
+                fetch(endPoint, {
+                    method: "DELETE"
+                })
+                .then(res => res.json())
+                .then(data => window.location.href = data.redirect)
+            })
+        </script>
+    </body>
+
+</html>

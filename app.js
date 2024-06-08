@@ -86,6 +86,27 @@ app.post("/blogs", (req, res) => {
     })
 })
 
+// Get One Blog (GET) 
+app.get("/blogs/:id", (req, res) => {
+  const id = req.params.id
+  Blog.findById(id)
+    .then(result => {
+      console.log(result)
+      res.render("blog-detail", {title: "Blog Details", blog: result})
+    })
+    .catch(err => res.send(err))
+})
+
+// Delete Blog (DELETE)
+app.delete("/blogs/:id", (req, res) => {
+  const id = req.params.id
+  Blog.findByIdAndDelete(id)
+    .then(result => {
+      res.json({redirect: "/"})
+    })
+    .catch(err => console.log(err))
+})
+
 // 404 Page
 app.use((req, res) => {
   res.status(404).render('404', { title: '404' })
