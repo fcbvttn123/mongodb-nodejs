@@ -1,56 +1,22 @@
 const express = require("express")
 const router = express.Router()
 const Blog = require('../models/blog');
+const blogController = require("../controllers/blogController")
 
 // Home Page
-router.get("/", (req, res) => {
-  Blog.find()
-    .sort({ createdAt: -1 })
-    .then((result) => {
-      res.render("index", { title: "Home", blogs: result });
-    })
-    .catch((err) => res.send(err));
-});
+router.get("/", blogController.blog_index);
 
 // Create Page
-router.get("/create", (req, res) => {
-  res.render("create", { title: "Create a new blog" });
-});
+router.get("/create", blogController.blog_create_get);
 
 // Create Blog (POST) --> Need a middleware to do .body
-router.post("/", (req, res) => {
-  // req.body is an object with property names from the html form
-  const blog = new Blog(req.body);
-  blog
-    .save()
-    .then((result) => {
-      res.redirect("/blogs/create");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+router.post("/", blogController.blog_create_post)
 
 // Get One Blog (GET)
-router.get("/:id", (req, res) => {
-  const id = req.params.id;
-  Blog.findById(id)
-    .then((result) => {
-      console.log(result);
-      res.render("blog-detail", { title: "Blog Details", blog: result });
-    })
-    .catch((err) => res.send(err));
-});
+router.get("/:id", blogController.blog_details);
 
 // Delete Blog (DELETE)
-router.delete("/:id", (req, res) => {
-  const id = req.params.id;
-  Blog.findByIdAndDelete(id)
-    .then((result) => {
-      res.json({ redirect: "/" });
-    })
-    .catch((err) => console.log(err));
-});
+router.delete("/:id", blogController.blog_delete);
 
 // Export Router 
 module.exports = router
