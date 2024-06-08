@@ -21,6 +21,7 @@ app.set('view engine', 'ejs');
 
 // middleware & static files
 app.use(express.static('public'))
+app.use(express.urlencoded())
 
 // mongoose & mongo tests: CREATE
 app.get('/test-add-blog', (req, res) => {
@@ -55,7 +56,6 @@ app.get('/test-read-one-blog', (req, res) => {
 
 // Home Page
 app.get('/', (req, res) => {
-  const blogs = null;
   Blog.find().sort({createdAt: -1})
     .then(result => {
       res.render('index', { title: 'Home', blogs: result })
@@ -71,6 +71,19 @@ app.get('/about', (req, res) => {
 // Create Page
 app.get('/blogs/create', (req, res) => {
   res.render('create', { title: 'Create a new blog' })
+})
+
+// Create Blog (POST) --> Need a middleware to do .body
+app.post("/blogs", (req, res) => {
+  // req.body is an object with property names from the html form 
+  const blog = new Blog(req.body)
+  blog.save()
+    .then(result => {
+      res.redirect("/blogs/create")
+    })
+    .catch(err => {
+      console.log(err)
+    })
 })
 
 // 404 Page
